@@ -44,6 +44,7 @@ _ = builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 
 var port = Environment.GetEnvironmentVariable("PORT");
+Log.Information("PORT: {Port}", port);
 
 // Se a variável PORT existir, configure o Kestrel para usá-la.
 // Se você não tiver problemas, PODE IGNORAR ESTE PASSO.
@@ -69,7 +70,7 @@ if (app.Environment.IsDevelopment())
         c.DisplayRequestDuration();
     });
 
-    app.UseHttpsRedirection();
+   // app.UseHttpsRedirection();
 }
 
 app.UseCors("AllowAllOrigins");
