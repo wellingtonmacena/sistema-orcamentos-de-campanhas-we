@@ -43,7 +43,7 @@ _ = builder.Services.AddDbContext<AppDbContext>(options =>
        
     ));
 
-var port = Environment.GetEnvironmentVariable("PORT");
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Log.Information("PORT: {Port}", port);
 Console.WriteLine($"PORT: {port}");
 
@@ -54,13 +54,9 @@ foreach (var arg in builder.Configuration.AsEnumerable())
 
 // Se a variável PORT existir, configure o Kestrel para usá-la.
 // Se você não tiver problemas, PODE IGNORAR ESTE PASSO.
-if (!string.IsNullOrEmpty(port))
-{
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(int.Parse(port)); // Escuta em 0.0.0.0 na porta definida
-    });
-}
+
+
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
