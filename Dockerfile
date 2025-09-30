@@ -1,28 +1,49 @@
-# See https://aka.ms/customizecontainer to learn how to customize your container for debugging and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used during VS Fast mode (Default for Debug configuration)
+# ------------------------------------------------------------------
+# STAGE 1: BASE (Runtime)
+# ------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# This stage is used to build the service project
+# ------------------------------------------------------------------
+# STAGE 2: BUILD
+# ------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY [".CampaignBudgetingAPI/CampaignBudgetingAPI.csproj", "/"]
+
+# 1. COPIA O ARQUIVO DO PROJETO PRIMEIRO
+#    Caminho de origem: CampaignBudgetingAPI/CampaignBudgetingAPI.csproj
+#    Caminho de destino: CampaignBudgetingAPI/
+COPY ["CampaignBudgetingAPI/CampaignBudgetingAPI.csproj", "CampaignBudgetingAPI/"]
+
+# 2. RESTAURA AS DEPENDÊNCIAS
 RUN dotnet restore "CampaignBudgetingAPI/CampaignBudgetingAPI.csproj"
+
+# 3. COPIA O RESTANTE DO CÓDIGO
 COPY . .
-WORKDIR "/src/CampaignBudgetingAPI"
+
+# 4. DEFINE O WORKDIR DENTRO DA PASTA DO PROJETO e CONSTRÓI
+WORKDIR "/src/CampaignBudgetingAPI" 
 RUN dotnet build "./CampaignBudgetingAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# ------------------------------------------------------------------
+# STAGE 3: PUBLISH
+# ------------------------------------------------------------------
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./CampaignBudgetingAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# O WORKDIR permanece o mesmo do estágio build (/src/CampaignBudgetingAPI)
 
-# This stage is used in production or when running in VS normal mode (default when not using Debug configuration)
+# Publica o projeto usando o caminho local (pois o WORKDIR já está na pasta do projeto)
+# Removemos o prefixo de pasta e o prefixo "./" para simplicidade
+RUN dotnet publish "CampaignBudgetingAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# ------------------------------------------------------------------
+# STAGE 4: FINAL (Production)
+# ------------------------------------------------------------------
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Nome do arquivo DLL deve corresponder ao nome do projeto
 ENTRYPOINT ["dotnet", "CampaignBudgetingAPI.dll"]
