@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/solutions_items/">
+    <File Path=".dockerignore" />
+    <File Path=".gitignore" />
+    <File Path="Dockerfile" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="CampaignBudgetingAPI/CampaignBudgetingAPI.csproj" />
+</Solution>
