@@ -68,11 +68,13 @@ if (app.Environment.IsDevelopment())
         c.EnableTryItOutByDefault();
         c.DisplayRequestDuration();
     });
+
+    app.UseHttpsRedirection();
 }
 
 app.UseCors("AllowAllOrigins");
 
-app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
