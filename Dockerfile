@@ -45,5 +45,12 @@ RUN dotnet publish "CampaignBudgetingAPI.csproj" -c $BUILD_CONFIGURATION -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-# Nome do arquivo DLL deve corresponder ao nome do projeto
+
+# Define o Kestrel para ouvir na porta 8080/8081, que é o padrão da imagem
+# É importante que o Kestrel escute em 0.0.0.0. A imagem base já faz isso.
+# A Render injeta a variável PORT. O ASP.NET Core lida com o mapeamento.
+# No entanto, se quiser ser *muito* explícito:
+ENV ASPNETCORE_URLS=http://+:${PORT:-8080}
+
+# O ENTRYPOINT continua o mesmo
 ENTRYPOINT ["dotnet", "CampaignBudgetingAPI.dll"]
