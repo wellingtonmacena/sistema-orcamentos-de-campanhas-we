@@ -25,6 +25,11 @@ namespace CampaignBudgetingAPI.Shared
             CreateMap<CampaignUpdateRequest, Campaign>();
             CreateMap<Campaign, CampaignResponse>();
 
+            CreateMap<CampaignCreateRequest, Campaign>();
+            CreateMap<CampaignUpdateRequest, Campaign>();
+            CreateMap< User, CampaignResponse.CampaignUserResponse>();
+            CreateMap<Client, CampaignResponse.CampaignClientResponse>();
+
 
         }
     }
