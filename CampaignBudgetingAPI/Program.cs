@@ -58,7 +58,7 @@ var app = builder.Build();
         c.DisplayRequestDuration();
     });
 
-
+_ = app.UseMiddleware<ExceptionMiddleware>();
 // app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
 app.UseHealthChecks("/health");
