@@ -54,9 +54,6 @@ foreach (var arg in builder.Configuration.AsEnumerable())
 
 // Se a variável PORT existir, configure o Kestrel para usá-la.
 // Se você não tiver problemas, PODE IGNORAR ESTE PASSO.
-
-
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
